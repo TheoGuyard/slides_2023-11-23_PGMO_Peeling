@@ -1,0 +1,265 @@
+\section{Branch-and-Bound}
+
+\begin{frame}{Branch-and-Bound algorithms}
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[align=center,text width=0.9\textwidth] (concept) at ($(current page.north)+(0,-0.2\textwidth)$) {\textbf{Branch-and-Bound} \\ \textit{``Enumerate all candidate solutions and discard sub-optimal ones.''}};
+        %
+        %
+        %
+        \node (path0) at ($(current page.north)+(1.5,-3.5)$) {};
+        \node (path1) at ($(path0)+(2,0)$) {};
+        \node (path2) at ($(path0)+(3,-1)$) {};
+        \node (path3) at ($(path0)+(2,-3)$) {};
+        \node (path4) at ($(path0)+(1,-1.5)$) {};
+        \node (path5) at ($(path0)+(0,-1)$) {};
+        \path[ultra thick,draw,use Hobby shortcut,closed=true] (path0)..(path1)..(path2)..(path3)..(path4)..(path5);
+        %
+        %
+        %
+        \node at ($(path0)+(2,-0.75)$) {\Large{$\bullet$}};
+        \node at ($(path0)+(1,-0.75)$) {\Large{$\bullet$}};
+        \node at ($(path0)+(2.75,-2)$) {\Large{$\bullet$}};
+        \node at ($(path0)+(1.75,-2)$) {\Large{$\bullet$}};
+        %
+        %
+        %
+        \draw[ultra thick,dashed] (path2) -- (path4);
+        %
+        %
+        %
+        \draw[ultra thick,dashed] ($(path4)+(0.75,0.2)$)-- ($(path1)+(-1,0.4)$);
+        \draw[ultra thick,dashed] ($(path4)+(1,0.2)$) -- ($(path3)+(0.5,0)$);
+        %
+        %
+        %
+        \node (N3cross) at ($(path0)+(1,-0.75)$) {\textcolor{purple}{\LARGE\ding{55}}}; 
+        \node (N5cross) at ($(path0)+(1.75,-2)$) {\textcolor{purple}{\LARGE\ding{55}}}; 
+        \node (N6cross) at ($(path0)+(2.75,-2)$) {\textcolor{purple}{\LARGE\ding{55}}}; 
+        %
+        %
+        %
+        \node[text width=\textwidth] (principles1) at ($(current page.north)+(2,-0.65\textwidth)$) {
+            \textbf{\hspace*{-1.5cm}Main principles}
+            \begin{itemize}
+                \item[Branching:] Divide the search space
+                \item[Bounding:] Test whether a region can contain optimal solutions 
+                \item[Pruning:] Discard regions without optimal solutions
+            \end{itemize}
+        };
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Tree search}
+    \begin{tikzpicture}[remember picture,overlay,decoration={snake,amplitude=.4mm,segment length=2mm,post length=1mm},domain=0:4]
+        \onslide<+-> {
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30] at ($(current page.north)+(-3,-0.4\textheight)$) (node0) {$\nodeSymbIter{0}$};
+            \node [text width=.35\textwidth] at ($(node0.north)+(0,0.8)$) (problem) {
+            \begin{blocksix}{}
+                \centering
+                \scriptsize
+                $\left\{\begin{array}{rl}
+                \min &\tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2 + \reg\norm{\pv}{0} \\
+                \text{s.t.}& -\bigM \leq \pv \leq \bigM
+            \end{array}\right.$
+            \end{blocksix}
+            };
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node0.south)+(-1.5,-1.25)$) (node1) {$\nodeSymbIter{1}$};
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node0.south)+(+1.5,-1.25)$) (node2) {$\nodeSymbIter{2}$};
+            \draw [ultra thick,->] (node0.south west) -- (node1.north east) node (arrow01) [midway] {};
+            \draw [ultra thick,->] (node0.south east) -- (node2.north west) node (arrow02) [midway] {};
+            \node at (arrow01) [fill=white,draw,ultra thick] {\scriptsize{$\pvi{1} = 0$}};
+            \node at (arrow02) [fill=white,draw,ultra thick] {\scriptsize{$\pvi{1} \neq 0$}};
+        }
+        %
+        %
+        %
+        \onslide<+> {
+            \node [text width=.2\textwidth] at ($(node1.south)+(0,-0.6)$) (subprob1) {
+                \begin{blocksix}{}
+                    \scriptsize
+                    \centering
+                    Same problem
+                    + \emphtwo{constraint $\pvi{1} = 0$}
+                \end{blocksix}
+            };
+            \node [text width=.2\textwidth] at ($(node2.south)+(0,-0.6)$) (subprob2) {
+                \begin{blocksix}{}
+                    \scriptsize
+                    \centering
+                    Same problem
+                    + \emphtwo{constraint $\pvi{1} \neq 0$}
+                \end{blocksix}
+            };
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node1.south)+(-0.75,-1.35)$) (node3) {$\nodeSymbIter{3}$};
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node1.south)+(+0.75,-1.35)$) (node4) {$\nodeSymbIter{4}$};
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node2.south)+(-0.75,-1.35)$) (node5) {$\nodeSymbIter{5}$};
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node2.south)+(+0.75,-1.35)$) (node6) {$\nodeSymbIter{6}$};
+            \draw [ultra thick,->] (node1.south west) -- (node3.north) node (arrow13) [fill=white,draw,midway] {\scriptsize{$\pvi{2} = 0$}};
+            \draw [ultra thick,->] (node1.south east) -- (node4.north) node (arrow14) [fill=white,draw,midway] {\scriptsize{$\pvi{2} \neq 0$}};
+            \draw [ultra thick,->] (node2.south west) -- (node5.north) node (arrow25) [fill=white,draw,midway] {\scriptsize{$\pvi{2} = 0$}};
+            \draw [ultra thick,->] (node2.south east) -- (node6.north) node (arrow26) [fill=white,draw,midway] {\scriptsize{$\pvi{2} \neq 0$}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(current page.north)+(3,-0.4\textheight)$) (node) {$\nodeSymbIter{k}$};
+            \draw [ultra thick,->] ($(node.north)+(0,0.5)$) -- (node.north) {};
+            \node at ($(node.south)+(0,-0.4)$) (subprob) {\small\textbf{Subproblem}};
+            \node at ($(subprob.south)+(0,-0.1)$) (nphard) {\small{Still NP-hard}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node at ($(nphard.south)+(-1.5,-0.75)$) (heur) {\small\textbf{Heuristic}};
+            \draw [ultra thick,->,decorate] (nphard.south west) -- (heur.north) {};
+            \node at ($(heur.south)+(0,-0.1)$) (upperbound) {\small{Upper bound}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node at ($(nphard.south)+(1.5,-0.75)$) (relax) {\small\textbf{Relaxation}};
+            \draw [ultra thick,->,decorate] (nphard.south east) -- (relax.north) {};
+            \node at ($(relax.south)+(0,-0.1)$) (lowerbound) {\small{Lower bound}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node at ($(nphard.south)+(0,-2)$)  (pruning) {\small\textbf{Pruning rule}};
+            \draw [ultra thick,->,decorate] (upperbound.south) -- (pruning.north west) {};
+            \draw [ultra thick,->,decorate] (lowerbound.south) -- (pruning.north east) {};
+            \node at ($(pruning.south)+(0,-0.1)$) (rule) {\small{Node LB > Best UB}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node at ($(node4.south)+(0,-0.2)$) (bullet4) {\ding{56}};
+            \draw [ultra thick] (node4.south) -- ($(bullet4.south)+(0,0.2)$);
+            \node at ($(node5.south)+(0,-0.2)$) (bullet5) {\ding{56}};
+            \draw [ultra thick] (node5.south) -- ($(bullet5.south)+(0,0.2)$);
+            \node at ($(node6.south)+(0,-0.2)$) (bullet6) {\ding{56}};
+            \draw [ultra thick] (node6.south) -- ($(bullet6.south)+(0,0.2)$);
+            \draw [ultra thick,->,dashed] (node3.south west) -- ($(node3.south west)+(-0.3,-0.4)$);
+            \draw [ultra thick,->,dashed] (node3.south east) -- ($(node3.south east)+(0.3,-0.4)$);
+        }
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Relaxation construction}
+    \begin{tikzpicture}[remember picture,overlay,decoration={snake,amplitude=.4mm,segment length=2mm,post length=1mm},domain=0:4]
+        \onslide<+-> {
+            \node [text width=.4\textwidth] at ($(current page.north)+(-3.5,-0.3\textheight)$) (nodeproblem) {
+            \begin{blocksix}{Node problem}
+                \centering
+                \scriptsize
+                $\left\{\begin{array}{rl}
+                    \min &\tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2 + \emphtwo{\reg\norm{\pv}{0}} \\
+                    \text{s.t.}& \emphtwo{-\bigM \leq \pv \leq \bigM}
+                \end{array}\right.$
+            \end{blocksix}
+            };
+        }
+        %
+        %
+        %
+        \newcommand{\pointsize}{0.03}
+        \begin{scope}[shift={(7,0.3)},xscale=2.3,yscale=2.5]
+            \onslide<+-> {
+                \node (origin) at (0,0) {};
+                \draw[ultra thick,->] (-1,0) -- (1, 0);
+                \draw[ultra thick,->] (0,0) -- (0, 1);
+                \draw[ultra thick] (-0.03,0.2) -- (0.03,0.2);
+                \node[right] at (1,0) {$\pv$};
+                \node[above right] at (0,0.2) {$\reg$};
+                %
+                \draw[ultra thick] (-0.03,0.7) -- (0.03,0.7);
+                \node[above right] at (0,0.7) {\small{$+\infty$}};
+                \draw[{Arc Barb[arc=130,reversed]}-,teal,ultra thick] (-0.5,0.2) plot[domain=0.03:0.5] (\x,0.2);
+                \draw[-{Arc Barb[arc=130,reversed]},teal,ultra thick] (-0.5,0.2) plot[domain=-0.5:-0.03] (\x,0.2) node {};
+                \fill[teal] (0,0) circle (\pointsize);
+                \fill[teal] (-0.5,0.2) circle (\pointsize);
+                \fill[teal] (0.5,0.2) circle (\pointsize);
+                \draw[{Arc Barb[arc=130,reversed]}-,teal,ultra thick] (0.5,0.7) plot[domain=0.5:0.8] (\x,0.7);
+                \draw[-{Arc Barb[arc=130,reversed]},teal,ultra thick] (-0.5,0.7) plot[domain=-0.8:-0.5] (\x,0.7);
+                \node[below] at (-0.5,0) {\small{$-\bigM$}};
+                \node[below] at (0.5,0) {\small{$\bigM$}};
+                \draw[ultra thick] (-0.5,-0.03) -- (-0.5,0.03);
+                \draw[ultra thick] (0.5,-0.03) -- (0.5,0.03);
+                \draw[ultra thick,<-,teal] (0.3,0.22) .. controls (0.3,0.4) .. (0.5,0.4) node[right] {\scriptsize{\textcolor{teal}{$\reg\norm{\pv}{0} + \text{Ind}(-\bigM \leq \pv \leq \bigM)$}}};
+            }
+            %
+            %
+            %
+            \onslide<+-> {
+                \draw[mLightBrown,ultra thick] (0, 0) -- (0.5, 0.2);
+                \fill[teal] (0,0) circle (\pointsize);
+                \fill[teal] (0.5,0.2) circle (\pointsize);
+                \draw[mLightBrown,ultra thick] (0.53,0.69) -- (0.8,0.69);
+                \draw[mLightBrown,ultra thick] (0, 0) -- (-0.5, 0.2);
+                \draw[mLightBrown,ultra thick] (-0.53, 0.69) -- (-0.8, 0.69);
+                \draw[ultra thick] (-0.5,-0.03) -- (-0.5,0.03);
+                \fill[teal] (0,0) circle (\pointsize);
+                \fill[teal] (-0.5,0.2) circle (\pointsize);
+                \draw[ultra thick,<-,mLightBrown] (0.3,0.09) .. controls (0.3,-0.2) .. (0.5,-0.2) node[right] {\scriptsize{\textcolor{mLightBrown}{$\tfrac{\reg}{\bigM}\norm{\pv}{1} + \text{Ind}(-\bigM \leq \pv \leq \bigM)$}}};
+            }
+        \end{scope}
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [text width=.4\textwidth] at ($(nodeproblem)+(0,-0.25\textheight)$) (relaxation) {
+            \begin{blocksix}{Relaxation}
+                \centering
+                \scriptsize
+                $\left\{\begin{array}{rl}
+                    \min &\tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2 + \emphtwo{\tfrac{\reg}{\bigM}\norm{\pv}{1}} \\
+                    \text{s.t.}& \emphtwo{-\bigM \leq \pv \leq \bigM}
+                \end{array}\right.$
+            \end{blocksix}
+            };
+            \draw[ultra thick,->] (nodeproblem.south) -- ($(relaxation.north)+(0,-0.3)$);
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [text width=.55\textwidth] at ($(current page.north)+(0,-0.85\textheight)$) (issue) {
+            \begin{blockthree}{Dilemma in the choice of $\bigM$}
+                \centering
+                \scriptsize
+                Large value of $\bigM$ to recover interesting solutions \\
+                Small value of $\bigM$ to build strong relaxations 
+            \end{blockthree}
+            };
+        }
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}[standout]
+    \begin{tikzpicture}[remember picture,overlay]
+        \node at ($(current page.center)+(0,0.5)$) {Our solution: Peeling};
+        \node at ($(current page.center)+(0,-0.5)$) {\small\textit{Start with $\bigM$ large and refine it locally along branches}};  
+    \end{tikzpicture}
+\end{frame}

@@ -1,0 +1,111 @@
+\section{Numerical results}
+
+\pgfplotsset{
+ 	legend image code/.code={
+		\draw[mark repeat=2,mark phase=2] plot coordinates {
+			(0cm,0cm)
+			(0.15cm,0cm)
+			(0.275cm,0cm)
+		};
+    }
+}
+
+\begin{frame}{Numerical results}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node [text width=.45\textwidth] at ($(current page.north)+(0,-0.175\textheight)$) (problem) {
+        \begin{blocksix}{}
+            \centering
+            \small
+            $\min_{\pv \in [-\bigM,\bigM]} \ \tfrac{1}{2}\norm{\obs-\dic\pv}{2}^2 + \reg \norm{\pv}{0}$
+        \end{blocksix}
+    };
+    %
+    %
+    %
+    \node<+-> [text width=.7\textwidth] at ($(current page.north)+(3,-0.34\textheight)$) (data) {
+      \begin{itemize}[nosep]
+        \item[\textbf{Data $\dic$ and $\obs$}] : Sparse regression
+        \item[\textbf{Parameter $\lambda$}] : Set statistically
+        \item[\textbf{Bound $\bigM$}] : $\bigM = \gamma\norm{\opt{\pv}}{\infty}$
+      \end{itemize}
+    };
+    %
+    %
+    %
+    \onslide<+-> {
+      \begin{scope}[shift={(0.2,-3.4)}]
+        \begin{axis}[
+          mlineplot,
+          width = 0.485\textwidth,
+          height = 5cm,
+          xmin = 0.5,
+          xmax = 5.5,
+          ymode = log,
+          ymin = 0.07,
+          ymax = 90000,
+          xtick = {1,2,3,4,5},
+          ytick = {0.1,1,10,100,1000,10000},
+          minor tick style={draw=none},
+          xlabel = $\gamma$,
+          title = \small{Solve time (sec.)},
+          legend style={at={(1.03,0.5)},anchor=west}
+        ]
+
+          \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=RoyalBlue2,visible on=<3->] %
+          table[x=bigmfactor,y=Cplex,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_solve_time.csv};
+
+          \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=SkyBlue2,visible on=<3->] %
+          table[x=bigmfactor,y=L0bnb,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_solve_time.csv};
+
+          \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=PaleGreen3,visible on=<3->] %
+          table[x=bigmfactor,y=Sbnb,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_solve_time.csv};
+
+          \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=DarkGoldenrod1,visible on=<3->] %
+          table[x=bigmfactor,y=SbnbNscr,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_solve_time.csv};
+
+          \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=OrangeRed1,visible on=<3->] %
+          table[x=bigmfactor,y=SbnbPeel,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_solve_time.csv};
+        \end{axis}
+      \end{scope}
+      \begin{scope}[shift={(4.8,-3.4)}]
+        \begin{axis}[
+          mlineplot,
+          width = 0.485\textwidth,
+          height = 5cm,
+          xmin = 0.5,
+          xmax = 5.5,
+          ymode = log,
+          ymin = 7,
+          ymax = 9000000,
+          xtick = {1,2,3,4,5},
+          ytick = {10,100,1000,10000,100000,1000000},
+          minor tick style={draw=none},
+          xlabel = $\gamma$,
+          title = \small{Node count},
+          legend style={at={(1.03,0.5)},anchor=west}
+        ]
+
+        \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=RoyalBlue2,visible on=<3->] %
+        table[x=bigmfactor,y=Cplex,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_node_count.csv};
+        \only<3-> {\addlegendentry{\scriptsize{Cplex}}}
+
+        \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=SkyBlue2,visible on=<3->] %
+        table[x=bigmfactor,y=L0bnb,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_node_count.csv};
+        \only<3-> {\addlegendentry{\scriptsize{Hazimeh et al. (2022)}}}
+
+        \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=PaleGreen3,visible on=<3->] %
+        table[x=bigmfactor,y=Sbnb,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_node_count.csv};
+        \only<3-> {\addlegendentry{\scriptsize{Mhenni et al. (2022)}}}
+
+        \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=DarkGoldenrod1,visible on=<3->] %
+        table[x=bigmfactor,y=SbnbNscr,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_node_count.csv};
+        \only<3-> {\addlegendentry{\scriptsize{Guyard et al. (2022)}}}
+
+        \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=OrangeRed1,visible on=<3->] %
+        table[x=bigmfactor,y=SbnbPeel,col sep=comma]{data/synt_opt_linear_LeastSquares_Bigm_7_100_150_1.0_0.1_1000.0_x_node_count.csv};
+        \only<3-> {\addlegendentry{\scriptsize{\textbf{Proposed}}}}
+        \end{axis}
+      \end{scope}
+    }
+  \end{tikzpicture}
+\end{frame}

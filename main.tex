@@ -1,48 +1,72 @@
-\documentclass[xcolor={x11names},10pt]{beamer}
+\documentclass[10pt,xcolor={x11names}]{beamer}
 
-\usetheme{metropolis}
-\metroset{numbering=fraction}
-\metroset{block=fill}
+\usetheme[numbering=fraction,block=fill]{metropolis}
+\usecolortheme{seahorse}
+\setbeamertemplate{blocks}[rounded]
 
-\newcommand{\backupbegin}{
-  \newcounter{finalframe}
-  \setcounter{finalframe}{\value{framenumber}}
-}
-\newcommand{\backupend}{
-  \setcounter{framenumber}{\value{finalframe}}
-}
-
-\usepackage{headings/kmath}
+\usepackage{kmath}
 \input{headings/packages}
 \input{headings/macros}
 
-\newenvironment<>{blockcolor}[2]{%
-  \setbeamercolor{block title}{fg=#1,bg=#1!15}%
-  \setbeamercolor{block body}{fg=#1,bg=#1!15}%
-  \begin{block}#3{\centering#2}
-}{%
-  \end{block}
+\tikzset{
+  invisible/.style={opacity=0},
+  visible on/.style={alt={#1{}{invisible}}},
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  },
 }
 
-\definecolor{TolLightWhite}{HTML}{FAFAFA}
-\definecolor{TolLightOrange}{HTML}{ECA244}
+\newenvironment<>{blockzero}[1]{%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+\newenvironment<>{blockone}[1]{%
+  \setbeamercolor{block title}{fg=mLightGreen,bg=mLightGreen!20}%
+  \setbeamercolor{block body}{fg=mLightGreen,bg=mLightGreen!20}%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+\newenvironment<>{blocktwo}[1]{%
+  \setbeamercolor{block title}{fg=mLightBrown,bg=mLightBrown!20}%
+  \setbeamercolor{block body}{fg=mLightBrown,bg=mLightBrown!20}%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+\newenvironment<>{blockthree}[1]{%
+  \setbeamercolor{block title}{fg=purple,bg=purple!20}%
+  \setbeamercolor{block body}{fg=purple,bg=purple!20}%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+\newenvironment<>{blockfour}[1]{%
+  \setbeamercolor{block title}{fg=blue,bg=blue!20}%
+  \setbeamercolor{block body}{fg=blue,bg=blue!20}%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+\newenvironment<>{blockfive}[1]{%
+  \setbeamercolor{block title}{fg=blue,bg=blue!30}%
+  \setbeamercolor{block body}{fg=blue,bg=blue!20}%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+\newenvironment<>{blocksix}[1]{%
+  \setbeamercolor{block title}{fg=black,bg=black!13}%
+  \setbeamercolor{block body}{fg=black,bg=black!13}%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+\newenvironment<>{blockseven}[1]{%
+  \setbeamercolor{block title}{fg=black,bg=white}%
+  \setbeamercolor{block body}{fg=black,bg=white}%
+  \begin{block}#2{\centering#1\par}}{\end{block}}
+
+\newcommand{\emphone}[1]{{\color{mLightGreen}#1}}
+\newcommand{\emphtwo}[1]{{\color{mLightBrown}#1}}
+\newcommand{\emphthree}[1]{{\color{purple}#1}}
+\newcommand{\emphfour}[1]{{\color{blue}#1}}
+
+\title{Peeling for L0-Regularized Least-Squares}
+\author{\textbf{Th\'{e}o Guyard}${}^{\star}$, Gilles Monnoyer$^{\diamond}$, C\'{e}dric Herzet${}^{\dagger}$ and Cl\'{e}ment Elvira$^{\ddagger}$}
+\date{\scriptsize{$^{\star}$Inria, Rennes, France \\ $^{\diamond}$UCLouvain, Louvain, Belgium \\ $^{\dagger}$Ensai, Rennes, France \\ $^{\ddagger}$CentraleSupelec, Rennes, France}}
+\institute{PGMO days \\ EDF Lab, Saclay, France \\ November 29th, 2023}
+
 
 \begin{document}
 
-\begin{frame}[plain,noframenumbering]
-  \begin{center}
-    {\large\textbf{Slides Template}}
-  \end{center}
-  \begin{center}
-    Théo Guyard
-  \end{center}
-\end{frame}
+\maketitle
 
-% Main slides
-
-% \backupbegin
-% Supplementary slides
-% \backupend
-
+\input{pages/problems}
+\input{pages/bnb}
+\input{pages/peeling}
+\input{pages/numerics}
+\input{pages/takehome}
+\input{pages/questions}
 
 \end{document}

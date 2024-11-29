@@ -1,0 +1,249 @@
+\section{Peeling}
+
+\begin{frame}{Bound tightening}
+    \begin{tikzpicture}[remember picture,overlay,decoration={snake,amplitude=.4mm,segment length=2mm,post length=1mm},domain=0:4]
+        \node at ($(current page.north)+(-4.7,-8.7)$) (origin) {};
+        \onslide<+-> {
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(current page.north)+(0,-2)$) (node) {$\nodeSymbIter{k}$};
+            \draw [ultra thick,->] ($(node.north)+(0,0.3)$) -- (node.north);
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,font=\small,dashed] at ($(node.south)+(1.25,-1.5)$) (node1) {$\nodeSymbIter{k'}$};
+            \draw [ultra thick,->,dashed] (node.south east) -- (node1.north west) node (arrow01) [fill=white,draw,midway] {\scriptsize{$\pv \notin [-\bigM',\bigM']$}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [text width=0.32\textwidth] at ($(node.east)+(3.5,0.25)$) (objective) {
+                \small
+                \begin{blocksix}{}
+                    \centering
+                    \textbf{Find some \\ \emphtwo{$\bigM' \leq \bigM$} \\ such that $\nodeSymbIter{k'}$ is pruned}
+                \end{blocksix}
+            };
+            \node at ($(node1.south)+(0,-0.2)$) (bullet) {\ding{56}};
+            \draw [ultra thick] (node1.south) -- ($(bullet.south)+(0,0.2)$);
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \draw[mLightBrown,ultra thick,->] (node.north west) .. controls ($(node.north)+(-3.5,1)$) and ($(node.south)+(-3.5,-1)$) .. (node.south west);
+            \node[draw=mLightBrown,ultra thick,top color = white,bottom color = orange!25,font=\scriptsize,align=center,ultra thick] at ($(node.west)+(-2.5,0)$) (fix) {Tighten the bound constraint \\ $\pv \in [-\bigM',\bigM']$};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node[align=center] at ($(origin)+(2.5,3.8)$) {\small\textbf{Relaxation resolution at node} $\nodeSymbIter{k}$};
+            \draw[->,ultra thick] ($(origin)+(-0.2,0)$) -- ($(origin)+(5,0)$) node[below left] {\scriptsize{iterations}};
+            \draw[->,ultra thick] ($(origin)+(0,-0.2)$) -- ($(origin)+(0,4)$) node[above] {};
+            \node[font=\scriptsize,align=center] at ($(origin)+(-0.8,3.3)$) (fix1) {\textcolor{blue!50}{Relax. obj.} \\ \textcolor{blue!50}{at node $N^k$}};
+            \begin{scope}[shift={(0.22,-2.2)},scale=0.5]
+                \draw [color=blue!50,domain=1:10,samples=200,variable=\x,ultra thick] plot (\x,{5*(sin(20*\x r)/(10*\x^2))+exp(-0.8*\x+2)});
+            \end{scope}
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node[font=\scriptsize,align=center] at ($(origin)+(-0.8,0.3)$) (fix1) {\textcolor{blue!50}{Dual. obj.} \\ \textcolor{blue!50}{at node $N^k$}};
+            \begin{scope}[shift={(0.22,-2.2)},scale=0.5]
+                \draw [color=blue!50,domain=1:10,samples=200,variable=\x,ultra thick] plot (\x,{-5*(sin(20*\x r)/(10*\x^2))-exp(-1.5*\x+2)});
+            \end{scope}
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [text width=0.45\textwidth] at ($(current page.north)+(3.5,-6.5)$) (ingredients) {
+                \small
+                \textbf{Ingredients}
+                \begin{itemize}[leftmargin=*,label=$\bullet$,nosep]
+                    \item<6-> Already-computed quantities
+                    \item<6-> Cost-free dual evaluation
+                    \item<7-> Dual link between nodes
+                    \item<11-> \emphtwo{Coordinate-wise} tightening 
+                    \item<11-> \emphtwo{Non-symmetric} tightening 
+                \end{itemize} 
+            };
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node at ($(current page.north)+(3.5,-8.5)$) {$D_{N^{k'}}(\dv) = D_{N^k}(\dv) + \gamma(\dv)$};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node[font=\scriptsize,align=center] at ($(origin)+(-0.8,1.15)$) {\textcolor{blue!50}{Dual obj.} \\ \textcolor{blue!50}{at node $N^{k'}$}};
+            \begin{scope}[shift={(0.22,-2)},scale=0.5]
+                \draw [color=blue!50,domain=1:10,samples=200,variable=\x,ultra thick,dashed] plot (\x,{-5*(sin(10*\x r)/(10*\x^2))-exp(-0.8*\x+2)+2});
+            \end{scope}
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node at ($(origin)+(-0.7,2.35)$) {\scriptsize\textcolor{red!50}{Best UB}};
+            \begin{scope}[shift={(0.22,-1.7)},scale=0.5]
+                \draw [domain=1:10,samples=200,variable=\x,ultra thick,color=red!50] plot (\x,0.9);
+            \end{scope}
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \draw[dashed,ultra thick,draw=red!50] ($(origin)+(1.25,2.3)$) -- ($(origin)+(1.25,0)$) {};
+            \node at ($(origin)+(1.25,-0.25)$) {\scriptsize\textcolor{red!50}{\textbf{Prune $N^{k'}$}}};
+        }
+        %
+        %
+        %
+        \node<+-> at (0,0) {};
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Propagation along branches}
+    \begin{tikzpicture}[remember picture,overlay,decoration={snake,amplitude=.4mm,segment length=2mm,post length=1mm},domain=0:4]
+        \onslide<+-> {
+            \node at ($(current page.north)+(-3,-0.2\textheight)$) (text) {\textbf{Standard BnB}};
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30] at ($(current page.north)+(-5,-0.35\textheight)$) (node0) {$\nodeSymbIter{0}$};
+            \node at ($(node0.north)+(0,0.25)$) (dataub) {\scriptsize{UB = 3}};
+            \node[text width=.45\textwidth] at ($(node0.east)+(2,0.1)$) (data0) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in [-5,5]$ \\
+                    \item $\text{LB} = 1$
+                \end{itemize}
+            };
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node0.south)+(1,-0.75)$) (node1) {$\nodeSymbIter{1}$};
+            \draw [ultra thick,->] (node0.south east) -- (node1.north west);
+            \node[text width=.45\textwidth] at ($(node1.east)+(2,0.1)$) (data1) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in [-5,5]$ \\
+                    \item $\text{LB} = 1.5$
+                \end{itemize}
+            };
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node1.south)+(+1,-0.75)$) (node2) {$\nodeSymbIter{2}$};
+            \draw [ultra thick,->] (node1.south east) -- (node2.north west);
+            \node[text width=.45\textwidth] at ($(node2.east)+(2,0.1)$) (data2) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in [-5,5]$ \\
+                    \item $\text{LB} = 2.25$
+                \end{itemize}
+            };
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node2.south)+(+1,-0.75)$) (node3) {$\nodeSymbIter{3}$};
+            \draw [ultra thick,->] (node2.south east) -- (node3.north west);
+            \node[text width=.45\textwidth] at ($(node3.east)+(2,0.1)$) (data3) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in [-5,5]$ \\
+                    \item $\text{LB} = 2.75$
+                \end{itemize}
+            };
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node3.south)+(+1,-0.75)$) (node4) {$\nodeSymbIter{4}$};
+            \draw [ultra thick,->] (node3.south east) -- (node4.north west);
+            \node[text width=.45\textwidth] at ($(node4.east)+(2,0.1)$) (data4) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in [-5,5]$ \\
+                    \item $\text{LB} = 3.5$
+                \end{itemize}
+            };
+            \draw [ultra thick] (node4.south) -- ($(node4.south)+(0,-0.25)$) node {\ding{56}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node at ($(current page.north)+(3,-0.2\textheight)$) (text) {\textbf{BnB with peeling}};
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30] at ($(current page.north)+(1,-0.35\textheight)$) (node0bis) {$\nodeSymbIter{0}$};
+            \node at ($(node0bis.north)+(0,0.25)$) (dataubbis) {\scriptsize{UB = 3}};
+            \node[text width=.45\textwidth] at ($(node0bis.east)+(2,0.1)$) (data0bis) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in [-5,5]$ \\
+                    \item $\text{LB} = 1$
+                \end{itemize}
+            };
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node0bis.south)+(1,-0.75)$) (node1bis) {$\nodeSymbIter{1}$};
+            \draw [ultra thick,->] (node0bis.south east) -- (node1bis.north west);
+            \node[text width=.45\textwidth] at ($(node1bis.east)+(2,0.1)$) (data1bis) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in \emphtwo{[-2.5,3]}$ \\
+                    \item \emphtwo{$\text{LB} = 2.5$}
+                \end{itemize}
+            };
+            %
+            \node [circle,draw,ultra thick,top color = white,
+            bottom color = blue!30,] at ($(node1bis.south)+(1,-0.75)$) (node2bis) {$\nodeSymbIter{2}$};
+            \draw [ultra thick,->] (node1bis.south east) -- (node2bis.north west);
+            \node[text width=.45\textwidth] at ($(node2bis.east)+(2,0.1)$) (data2bis) {
+                \scriptsize
+                \begin{itemize}[nosep]
+                    \item $\pvi{} \in \emphtwo{[-0.5,1.5]}$ \\
+                    \item \emphtwo{$\text{LB} = 3.2$}
+                \end{itemize}
+            };
+            \draw [ultra thick] (node2bis.south) -- ($(node2bis.south)+(0,-0.25)$) node {\ding{56}};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node[align=left] at ($(current page.north)+(4,-0.85\textheight)$) (text) {\ding{52} Branches pruned early-on \\ \ding{52} Less nodes explored \\ \ding{52} Reduce solve time};
+            %
+        }
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Bound spread reduction}
+    \begin{tikzpicture}[remember picture,overlay]
+        \begin{scope}[shift={(2,-3)}]
+            \begin{axis}[
+                mlineplot,
+                width = 0.8\textwidth,
+                height = 0.8\textheight,
+                ymin = 0,
+                ymax = 1.1,
+                xmin = 0,
+                xmax = 1.1,
+                minor tick style={draw=none},
+                xlabel = Relative node depth,
+                ylabel = Relative bound constraint spread,
+                legend style={at={(0.2,1.1)},anchor=west,column sep=5pt},
+                legend columns=2,
+            ]
+    
+                \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=DarkGoldenrod1] %
+                table[x=node_depth,y=bnb,col sep=comma]{data/spread.csv};
+                \addlegendentry{BnB}
+
+                \addplot[ultra thick, smooth, mark=*, mark options={scale=0.5}, color=OrangeRed1] %
+                table[x=node_depth,y=bnb_peeling,col sep=comma]{data/spread.csv};
+                \addlegendentry{BnB with peeling}
+            \end{axis}
+          \end{scope}
+    \end{tikzpicture}
+\end{frame}

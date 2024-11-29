@@ -1,0 +1,43 @@
+\setbeamertemplate{headline}{}
+
+\begin{frame}
+    \begin{tikzpicture}[remember picture,overlay]
+        \node at ($(current page.north)+(0,-0.1\textheight)$) (text) {\centering\Large{\emphtwo{\textbf{Take-home message}}}};
+        \node [text width=.47\textwidth] at ($(current page.north)+(0,-0.3\textheight)$) (problem) {
+            \begin{blocksix}{$\ell_0$-regularized least-squares}
+                \centering
+                \vspace*{-0.5cm}
+                \begin{align*}
+                    \textstyle\min_{\pv} &\quad \tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2 + \reg \norm{\pv}{0} \\
+                    \text{s.t.} &\quad -\bigM \leq \pv \leq \bigM
+                \end{align*}
+            \end{blocksix}
+        };
+        %
+        \node [text width=.38\textwidth] at ($(problem)+(-3.5,-0.3\textheight)$) (largebounds) {
+            \begin{blocksix}{} 
+                \centering
+                \textbf{Wide interval $[-\bigM,\bigM]$ to recover the solution}
+            \end{blocksix}
+        };
+        \node [text width=.38\textwidth] at ($(problem)+(+3.5,-0.3\textheight)$) (smallbounds) {
+            \begin{blocksix}{} 
+                \centering
+                \textbf{Tight interval $[-\bigM,\bigM]$ to build strong relaxations}
+            \end{blocksix}
+        };
+        %
+        \draw[ultra thick,->] (problem.south west) .. controls ($(problem.south west)+(-0.5,-0.4)$) .. ($(largebounds.north)+(0,-0.3)$);
+        \draw[ultra thick,->] (problem.south east) .. controls ($(problem.south east)+(0.5,-0.4)$) .. ($(smallbounds.north)+(0,-0.3)$);
+        \draw[ultra thick,<->] ($(largebounds.east)+(0.1,-0.2)$) -- ($(smallbounds.west)+(-0.1,-0.2)$) node[midway] {\emphthree{\LARGE\ding{56}}};
+        %
+        \node [text width=.55\textwidth] at ($(current page.north)+(0,-0.9\textheight)$) (peeling) {
+            \begin{blocktwo}{Peeling}
+                \centering
+                Start with wide interval $[-\bigM,\bigM]$ and refine it along the BnB branches
+            \end{blocktwo}
+        };
+        \draw[ultra thick,->] (largebounds.south) .. controls ($(largebounds.south)+(0,-0.4)$) .. ($(peeling.north west)+(0,-0.3)$);
+        \draw[ultra thick,->] (smallbounds.south) .. controls ($(smallbounds.south)+(0,-0.4)$) .. ($(peeling.north east)+(0,-0.3)$);
+    \end{tikzpicture}
+\end{frame}

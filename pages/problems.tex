@@ -1,0 +1,98 @@
+\section{L0-Regularized Least-Squares}
+
+\begin{frame}{Framework}
+    \begin{tikzpicture}[overlay,remember picture]
+        \onslide<+-> {
+            \node[align=left,text width=\textwidth] (sparse) at ($(current page.north)+(0,-0.25\textheight)$) {%
+                \textbf{Sparse linear models}
+                \begin{itemize}
+                    \item[$\bullet$] \emphtwo{Linear regression} with a \emphtwo{sparse} optimizer
+                    \item[$\bullet$] Applications in signal processing, machine learning, statistics, etc...
+                \end{itemize}
+            };
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node[align=center,text width=0.5\textwidth] (problem) at ($(sparse.south)+(0,-0.15\textheight)$) {%
+                \begin{blocktwo}{$\ell_0$-regularized least-squares}
+                    \centering
+                    $\min_{x} \ \tfrac{1}{2}\norm{\obs-\dic\pv}{2}^2 + \reg \norm{x}{0}$
+                \end{blocktwo}
+            };
+            %
+            \node[align=left,text width=\textwidth] at ($(problem.south)+(0,-0.225\textheight)$) {%
+                \textbf{Ingredients}
+                \begin{itemize}
+                    \item[$\bullet$] Least-squares loss to ensure the linear model fitting
+                    \item[$\bullet$] $\ell_0$-norm that \emphtwo{counts the non-zeros} in $\pv$
+                    \item[$\bullet$] Tradeoff parameter $\reg > 0$ to control the sparsity
+                \end{itemize}
+            };
+        }
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Solving $\ell_0$-regularized problems}
+    \begin{tikzpicture}[overlay, remember picture]
+        \onslide<+-> {
+            \node[text width=0.45\textwidth] at ($(current page.north)+(0,-0.21\textheight)$) (problem) {
+                \begin{blocksix}{Initial problem}
+                    \centering
+                    $\min_{\pv} \ \tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2 + \reg \norm{\pv}{0}$
+                \end{blocksix}
+            };
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \draw[ultra thick,<-] (problem.east) .. controls ($(problem.east)+(1,0)$) .. ($(problem.east)+(2,-0.5)$) node[below,font=\scriptsize,align=center,text width=0.3\textwidth] {Non-linear, non-convex, \\ non-smooth, NP-hard, ...};
+            \node at ($(problem.east)+(2,-1.5)$) {
+                \includegraphics[width=15pt]{imgs/dizzy.png}
+            };  
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [text width=.45\textwidth] at ($(current page.north)+(0,-0.625\textheight)$) (reformulation) {
+                \begin{blocksix}{Reformulation}
+                    \centering
+                    \vspace*{-0.5cm}
+                    \begin{align*}
+                        \textstyle\min_{\pv} & \ \ \tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2 + \reg \norm{\pv}{0} \\
+                        \text{s.t.} & \ \ \emphtwo{-\bigM \leq \pv \leq \bigM}
+                    \end{align*}
+                \end{blocksix}
+            };
+            \draw[ultra thick,->] (problem.south) -- ($(reformulation.north)+(0,-0.3)$) node[midway,draw,fill=white] {Big-M method};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \draw[ultra thick,<-] (reformulation.east) .. controls ($(reformulation.east)+(1,0)$) .. ($(reformulation.east)+(2,0.5)$) node[above,font=\scriptsize,align=center,text width=0.3\textwidth] {Add binary variables to \emphtwo{linearize} the $\ell_0$-norm};
+        }
+        %
+        %
+        %
+        \onslide<+-> {
+            \node [text width=.35\textwidth] at ($(reformulation)+(-3,-0.3\textheight)$) (mipsolver) {
+                \begin{blocksix}{} 
+                    \centering
+                    \textbf{Generic Mixed-Integer Program solvers}
+                \end{blocksix}
+            };
+            \node [text width=.35\textwidth] at ($(reformulation)+(+3,-0.3\textheight)$) (bnbsolver) {
+                \begin{blocksix}{} 
+                    \centering
+                    \textbf{Specialized \emphtwo{Branch- and-Bound} solvers}
+                \end{blocksix}
+            };
+            \draw[ultra thick,->] (reformulation.south west) .. controls ($(reformulation.south west)+(-0.25,-0.4)$) .. ($(mipsolver.north)+(0,-0.3)$);
+            \draw[ultra thick,->] (reformulation.south east) .. controls ($(reformulation.south east)+(0.25,-0.4)$) .. ($(bnbsolver.north)+(0,-0.3)$);
+        }
+    \end{tikzpicture}
+\end{frame}
